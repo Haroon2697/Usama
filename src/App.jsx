@@ -51,7 +51,7 @@ function App() {
         rel="noopener noreferrer"
         className="fixed left-6 bottom-6 bg-green-500 text-white p-3 rounded-full shadow-lg hover:bg-green-600 transition duration-300"
       >
-        <FaWhatsapp size={24} />
+        <FaWhatsapp size={28} />
       </a>
     </Router>
   );
