@@ -28,11 +28,10 @@ export default function Footer() {
           <div className="w-full md:w-1/3 text-center md:text-right mb-6 md:mb-0">
             <h4 className="font-semibold mb-3">Follow Us</h4>
             <div className="flex justify-center md:justify-end space-x-6">
-              <a href="https://facebook.com" aria-label="Facebook" className="hover:text-green-300"><FaFacebookF size={28} /></a>
+              <a href="https://www.facebook.com/profile.php?id=100082643989154&mibextid=ZbWKwL" aria-label="Facebook" className="hover:text-green-300"><FaFacebookF size={28} /></a>
               <a href="https://twitter.com" aria-label="Twitter" className="hover:text-green-300"><FaTwitter size={28} /></a>
               <a href="https://instagram.com" aria-label="Instagram" className="hover:text-green-300"><FaInstagram size={28} /></a>
               <a href="https://youtube.com" aria-label="YouTube" className="hover:text-green-300"><FaYoutube size={28} /></a>
-              <a href="https://skype.com" aria-label="Skype" className="hover:text-green-300"><FaSkype size={28} /></a>
             </div>
           </div>
         </div>
