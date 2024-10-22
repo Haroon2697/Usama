@@ -1,4 +1,5 @@
 import React from 'react';
+import Reviews from '../components/Reviews';
 
 export default function About() {
   return (
@@ -23,6 +24,8 @@ export default function About() {
           </div>
         </div>
       </div>
+      {/* Include the Reviews component */}
+      <Reviews />
     </section>
   );
 }
