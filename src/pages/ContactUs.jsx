@@ -16,6 +16,12 @@ export default function ContactUs() {
       ...prevState,
       [name]: value
     }));
+
+    // Clear errors on input change
+    setErrors(prevErrors => ({
+      ...prevErrors,
+      [name]: ''
+    }));
   };
 
   const validateForm = () => {
@@ -34,16 +40,37 @@ export default function ContactUs() {
     return newErrors;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const formErrors = validateForm();
     if (Object.keys(formErrors).length === 0) {
-      console.log('Form submitted:', formData);
-      // Submit the form data to the backend (e.g., API call here)
-      setFormData({ name: '', email: '', message: '' });
-      setSubmitted(true);
+      try {
+        const response = await fetch('https://formspree.io/f/mkgngzgl', {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: formData.name,
+            email: formData.email,
+            message: formData.message,
+            subject: `New Contact Form Submission from ${formData.name}`
+          })
+        });
+
+        if (response.ok) {
+          setFormData({ name: '', email: '', message: '' }); // Reset form data
+          setSubmitted(true); // Indicate submission success
+        } else {
+          const errorData = await response.json();
+          console.error('Form submission failed:', errorData);
+        }
+      } catch (error) {
+        console.error('Error submitting the form', error);
+      }
     } else {
-      setErrors(formErrors);
+      setErrors(formErrors); // Set validation errors
     }
   };
 

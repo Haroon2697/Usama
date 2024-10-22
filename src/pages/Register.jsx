@@ -8,6 +8,9 @@ export default function Register() {
     course: '',
   });
 
+  const [submitted, setSubmitted] = useState(false);
+  const [errors, setErrors] = useState({});
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevState) => ({
@@ -16,11 +19,45 @@ export default function Register() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const validateForm = () => {
+    const newErrors = {};
+    if (!formData.name.trim()) newErrors.name = 'Name is required';
+    if (!formData.email.trim()) newErrors.email = 'Email is required';
+    if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'Email is invalid';
+    if (!formData.phone.trim()) newErrors.phone = 'Phone is required';
+    if (!formData.course.trim()) newErrors.course = 'Course selection is required';
+    return newErrors;
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
-    // Typically send form data to your backend here.
-    setFormData({ name: '', email: '', phone: '', course: '' });
+    const formErrors = validateForm();
+    if (Object.keys(formErrors).length === 0) {
+      try {
+        const response = await fetch('https://formspree.io/f/mrbgblgg', {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            ...formData,
+            subject: 'New Registration Form Submission',
+          }),
+        });
+
+        if (response.ok) {
+          setSubmitted(true);
+          setFormData({ name: '', email: '', phone: '', course: '' }); // Reset form data
+        } else {
+          console.error('Submission failed', response);
+        }
+      } catch (error) {
+        console.error('Error submitting the form', error);
+      }
+    } else {
+      setErrors(formErrors); // Set any validation errors
+    }
   };
 
   return (
@@ -39,9 +76,10 @@ export default function Register() {
           </div>
 
           {/* Right Side - Registration Form */}
-          <div className="w-full md:w-2/5 p-8"> {/* Adjusted width for larger form area */}
+          <div className="w-full md:w-2/5 p-8">
             <div className="text-center mb-10">
-                            <p>Fill in the form to start your journey with us</p>
+              {submitted && <p className="text-green-600 mb-4">Thank you for your registration!</p>}
+              <p>Fill in the form to start your journey with us</p>
             </div>
             <form onSubmit={handleSubmit}>
               {['name', 'email', 'phone'].map((field, index) => (
@@ -60,11 +98,12 @@ export default function Register() {
                         name={field}
                         value={formData[field]}
                         onChange={handleChange}
-                        className="w-full -ml-10 pl-3 pr-3 py-2 rounded-lg border-2 border-gray-200 outline-none focus:border-green-700"
+                        className={`w-full -ml-10 pl-3 pr-3 py-2 rounded-lg border-2 border-gray-200 outline-none focus:border-green-700 ${errors[field] ? 'border-red-500' : ''}`}
                         placeholder={`Enter your ${field}`}
                         required
                         aria-label={`Your ${field}`}
                       />
+                      {errors[field] && <p className="text-red-500 text-sm">{errors[field]}</p>}
                     </div>
                   </div>
                 </div>
@@ -81,7 +120,7 @@ export default function Register() {
                       name="course"
                       value={formData.course}
                       onChange={handleChange}
-                      className="w-full -ml-10 pl-3 pr-3 py-2 rounded-lg border-2 border-gray-200 outline-none focus:border-green-700"
+                      className={`w-full -ml-10 pl-3 pr-3 py-2 rounded-lg border-2 border-gray-200 outline-none focus:border-green-700 ${errors.course ? 'border-red-500' : ''}`}
                       required
                       aria-label="Select a course"
                     >
@@ -93,6 +132,7 @@ export default function Register() {
                       <option value="quran-tafseer">Quran Tafseer Course</option>
                       <option value="prayer-dua">Prayer and Duaa Lessons</option>
                     </select>
+                    {errors.course && <p className="text-red-500 text-sm">{errors.course}</p>}
                   </div>
                 </div>
               </div>
